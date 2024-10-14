@@ -1149,10 +1149,7 @@ p {
     gap: 8px;
   }
 }
-nav {
-  background: #18191c;
-  padding: 0 20px;
-}
+
 nav .container {
   max-width: 1500px;
   min-width: 1500px;

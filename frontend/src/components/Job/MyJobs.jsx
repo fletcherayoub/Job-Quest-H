@@ -1,5 +1,5 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { FaCheck, FaPencilAlt, FaTrash, FaBriefcase, FaMapMarkerAlt, FaDollarSign, FaCalendarAlt, FaImage, FaSearch } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
@@ -44,18 +44,17 @@ const MyJobs = () => {
     setEditingMode(null);
   };
 
-  const handleUpdateJob = async (jobId) => {
-    const updatedJob = myJobs.find((job) => job._id === jobId);
+  const handleUpdateJob = async (jobId, updatedJobData) => {
     const formData = new FormData();
     
-    for (const key in updatedJob) {
+    for (const key in updatedJobData) {
       if (key !== 'companyLogo') {
-        formData.append(key, updatedJob[key]);
+        formData.append(key, updatedJobData[key]);
       }
     }
 
-    if (updatedJob.newCompanyLogo) {
-      formData.append('companyLogo', updatedJob.newCompanyLogo);
+    if (updatedJobData.newCompanyLogo) {
+      formData.append('companyLogo', updatedJobData.newCompanyLogo);
     }
 
     try {
@@ -83,22 +82,6 @@ const MyJobs = () => {
     } catch (error) {
       toast.error(error.response.data.message);
     }
-  };
-
-  const handleInputChange = (jobId, field, value) => {
-    setMyJobs((prevJobs) =>
-      prevJobs.map((job) =>
-        job._id === jobId ? { ...job, [field]: value } : job
-      )
-    );
-  };
-
-  const handleLogoChange = (jobId, file) => {
-    setMyJobs((prevJobs) =>
-      prevJobs.map((job) =>
-        job._id === jobId ? { ...job, newCompanyLogo: file } : job
-      )
-    );
   };
 
   const handleSearch = (e) => {
@@ -166,162 +149,178 @@ const MyJobs = () => {
     </div>
   );
 
-  const EditJobForm = ({ job }) => (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-      <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Edit Job</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
-            <input
-              type="text"
-              value={job.title}
-              onChange={(e) => handleInputChange(job._id, "title", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Job Title"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+  const EditJobForm = ({ job }) => {
+    const [localJob, setLocalJob] = useState(job);
+
+    const handleLocalInputChange = (field, value) => {
+      setLocalJob((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const handleSubmit = () => {
+      handleUpdateJob(job._id, localJob);
+    };
+
+    const handleLogoChange = (file) => {
+      setLocalJob((prev) => ({ ...prev, newCompanyLogo: file }));
+    };
+
+    return (
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="p-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Edit Job</h2>
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
               <input
                 type="text"
-                value={job.country}
-                onChange={(e) => handleInputChange(job._id, "country", e.target.value)}
+                value={localJob.title}
+                onChange={(e) => handleLocalInputChange("title", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Country"
+                placeholder="Job Title"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-              <input
-                type="text"
-                value={job.city}
-                onChange={(e) => handleInputChange(job._id, "city", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="City"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-            <select
-              value={job.category}
-              onChange={(e) => handleInputChange(job._id, "category", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="All">All Categories</option>
-              <option value="Graphics & Design">Graphics & Design</option>
-              <option value="Mobile App Development">Mobile App Development</option>
-              <option value="Frontend Web Development">Frontend Web Development</option>
-              <option value="MERN Stack Development">MERN STACK Development </option>
-              <option value="Account & Finance">Account & Finance</option>
-              <option value="Artificial Intelligence">Artificial Intelligence</option>
-              <option value="Video Animation">Video Animation</option>
-              <option value="Data Entry Operator">Data Entry Operator</option>
-              <option value="Full-Stack Developer">Full-Stack Developer</option>
-              <option value="Data Analyst">Data Analyst</option>
-              <option value="Cybersecurity">Cybersecurity</option>
-              <option value="Cloud Computing">Cloud Computing</option>
-              <option value="Software Testing">Software Testing</option>
-              <option value="Software Engineering">Software Engineering</option>
-              <option value="Product Management">Product Management</option>
-              <option value="User Experience">User Experience</option>
-              <option value="Technical Support">Technical Support</option>
-              <option value="Sales and Marketing ">Sales and Marketing </option>
-              <option value="Human Resources">Human Resources</option>
-              <option value="Game Development">Game Development</option>
-              <option value="Blockchain and Cryptocurrency">Blockchain and Cryptocurrency</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {job.fixedSalary ? (
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fixed Salary</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
                 <input
-                  type="number"
-                  value={job.fixedSalary}
-                  onChange={(e) => handleInputChange(job._id, "fixedSalary", e.target.value)}
+                  type="text"
+                  value={localJob.country}
+                  onChange={(e) => handleLocalInputChange("country", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Fixed Salary"
+                  placeholder="Country"
                 />
               </div>
-            ) : (
-              <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+                <input
+                  type="text"
+                  value={localJob.city}
+                  onChange={(e) => handleLocalInputChange("city", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="City"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <select
+                value={localJob.category}
+                onChange={(e) => handleLocalInputChange("category", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All">All Categories</option>
+                <option value="Graphics & Design">Graphics & Design</option>
+                <option value="Mobile App Development">Mobile App Development</option>
+                <option value="Frontend Web Development">Frontend Web Development</option>
+                <option value="MERN Stack Development">MERN STACK Development </option>
+                <option value="Account & Finance">Account & Finance</option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Video Animation">Video Animation</option>
+                <option value="Data Entry Operator">Data Entry Operator</option>
+                <option value="Full-Stack Developer">Full-Stack Developer</option>
+                <option value="Data Analyst">Data Analyst</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Cloud Computing">Cloud Computing</option>
+                <option value="Software Testing">Software Testing</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Product Management">Product Management</option>
+                <option value="User Experience">User Experience</option>
+                <option value="Technical Support">Technical Support</option>
+                <option value="Sales and Marketing ">Sales and Marketing </option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Game Development">Game Development</option>
+                <option value="Blockchain and Cryptocurrency">Blockchain and Cryptocurrency</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {localJob.fixedSalary ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Salary From</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Fixed Salary</label>
                   <input
                     type="number"
-                    value={job.salaryFrom}
-                    onChange={(e) => handleInputChange(job._id, "salaryFrom", e.target.value)}
+                    value={localJob.fixedSalary}
+                    onChange={(e) => handleLocalInputChange("fixedSalary", e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Salary From"
+                    placeholder="Fixed Salary"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Salary To</label>
-                  <input
-                    type="number"
-                    value={job.salaryTo}
-                    onChange={(e) => handleInputChange(job._id, "salaryTo", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Salary To"
-                  />
-                </div>
-              </>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select
-              value={job.expired}
-              onChange={(e) => handleInputChange(job._id, "expired", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value={false}>Active</option>
-              <option value={true}>Expired</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Company Logo</label>
-            <input
-              type="file"
-              onChange={(e) => handleLogoChange(job._id, e.target.files[0])}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              accept="image/*"
-            />
-            {job.companyLogo && (
-              <img 
-                src={job.companyLogo.url} 
-                alt="Current Company Logo" 
-                className="mt-2 w-32 h-32 object-contain"
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Salary From</label>
+                    <input
+                      type="number"
+                      value={localJob.salaryFrom}
+                      onChange={(e) => handleLocalInputChange("salaryFrom", e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Salary From"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Salary To</label>
+                    <input
+                      type="number"
+                      value={localJob.salaryTo}
+                      onChange={(e) => handleLocalInputChange("salaryTo", e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Salary To"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                value={localJob.expired}
+                onChange={(e) => handleLocalInputChange("expired", e.target.value === "true")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value={false}>Active</option>
+                <option value={true}>Expired</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Company Logo</label>
+              <input
+                type="file"
+                onChange={(e) => handleLogoChange(e.target.files[0])}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                accept="image/*"
               />
-            )}
+              {localJob.companyLogo && (
+                <img 
+                  src={localJob.companyLogo.url} 
+                  alt="Current Company Logo" 
+                  className="mt-2 w-32 h-32 object-contain"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={handleSubmit}
+              className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300"
+            >
+              <FaCheck className="mr-2" />
+              Save
+            </button>
+            <button
+              onClick={handleDisableEdit}
+              className="flex items-center justify-center px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-300"
+            >
+              <RxCross2 className="mr-2" />
+              Cancel
+            </button>
           </div>
         </div>
       </div>
-      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={() => handleUpdateJob(job._id)}
-            className="flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300"
-          >
-            <FaCheck className="mr-2" />
-            Save
-          </button>
-          <button
-            onClick={handleDisableEdit}
-            className="flex items-center justify-center px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-300"
-          >
-            <RxCross2 className="mr-2" />
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+    );
+  };
 
- // Filter jobs based on search term
+  // Filter jobs based on search term
   const filteredJobs = myJobs.filter(job =>
     job.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -340,7 +339,7 @@ const MyJobs = () => {
     }
   
     return (
-      <navv className="flex justify-center mt-8">
+      <nav className="flex justify-center mt-8">
         <ul className="flex space-x-2">
           <li>
             <button
@@ -375,7 +374,7 @@ const MyJobs = () => {
             </button>
           </li>
         </ul>
-      </navv>
+      </nav>
     );
   };
 
@@ -391,7 +390,7 @@ const MyJobs = () => {
             placeholder="Search jobs by title..."
             value={searchTerm}
             onChange={handleSearch}
-            className="pl-12 pr-4 py-3 w-full border-2 border-blue-300 rounded-full shadow-md  transition duration-300 ease-in-out"
+            className="pl-12 pr-4 py-3 w-full border-2 border-blue-300 rounded-full shadow-md transition duration-300 ease-in-out"
           />
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FaSearch className="text-blue-400 text-xl" />
