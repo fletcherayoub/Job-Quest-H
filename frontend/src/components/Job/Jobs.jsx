@@ -27,6 +27,7 @@ const JobCard = ({ job }) => {
 
   return (
     <CCard className="h-full shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1 hover:scale-70">
+      <Link to={`/job/${job._id}`} className="mt-auto">
       <CCardImage
         orientation="top"
         src={job.companyLogo ? job.companyLogo.url : "/job.png"}
@@ -60,12 +61,12 @@ const JobCard = ({ job }) => {
             </div>
           </div>
         </div>
-        <Link to={`/job/${job._id}`} className="mt-auto">
           <CButton color="primary" className="w-full">
             View Job Details
           </CButton>
-        </Link>
+        
       </CCardBody>
+      </Link>
     </CCard>
   );
 };
@@ -91,7 +92,9 @@ const Jobs = () => {
         const res = await axios.get("http://localhost:4000/api/v1/job/getall", {
           withCredentials: true,
         });
-        setJobs(res.data.jobs);
+        // Sort jobs from latest to oldest
+        const sortedJobs = res.data.jobs.sort((a, b) => new Date(b.jobPostedOn) - new Date(a.jobPostedOn));
+        setJobs(sortedJobs);
       } catch (error) {
         setError("Failed to load jobs. Please try again later.");
       } finally {
@@ -288,7 +291,7 @@ const Jobs = () => {
               )}
             </div>
 
-            {/* Updated Pagination */}
+            {/* Pagination */}
             {filteredJobs.length > jobsPerPage && (
               <div className="mt-8 flex justify-center">
                 <nav className="inline-flex rounded-md shadow-sm" aria-label="Pagination">

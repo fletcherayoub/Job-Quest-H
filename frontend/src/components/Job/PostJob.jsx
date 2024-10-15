@@ -74,6 +74,8 @@ const PostJob = () => {
       setFixedSalary("");
       setSalaryType("default");
       setCompanyLogo(null);
+
+      navigateTo("/job/getall")
     } catch (err) {
       toast.error(err.response.data.message);
     }
