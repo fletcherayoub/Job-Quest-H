@@ -1,6 +1,5 @@
 country library
 range salary logic from > to
-order jobget all
 are sure
 delete experience when in cv maker
 jpeg cv problem no photo
