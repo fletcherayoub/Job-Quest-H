@@ -100,5 +100,5 @@ const CvPreview = ({ personalInfo, education, experience, selectedTemplate, onEd
     </div>
   );
 };
-
+// export default CvPreview;
 export default CvPreview;
