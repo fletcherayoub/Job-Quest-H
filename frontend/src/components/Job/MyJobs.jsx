@@ -339,7 +339,7 @@ const MyJobs = () => {
     }
   
     return (
-      <nav className="flex justify-center mt-8">
+      <navv className="flex justify-center mt-8">
         <ul className="flex space-x-2">
           <li>
             <button
@@ -374,7 +374,7 @@ const MyJobs = () => {
             </button>
           </li>
         </ul>
-      </nav>
+      </navv>
     );
   };
 

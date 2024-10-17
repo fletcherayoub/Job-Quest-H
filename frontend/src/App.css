@@ -1253,6 +1253,7 @@ nav .hamburger {
     align-items: flex-start;
     padding-left: 25px;
   }
+
   nav .show-menu {
     position: fixed;
     top: 120px;
@@ -1284,6 +1285,7 @@ nav .hamburger {
     color: #f1f3f6;
   }
 }
+
 @media (max-width: 490px) {
   nav .menu {
     width: 100%;

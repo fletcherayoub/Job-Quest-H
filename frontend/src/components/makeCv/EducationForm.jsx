@@ -20,6 +20,11 @@ const EducationForm = ({ education, setEducation }) => {
     });
   };
 
+  const deleteEducation = (index) => {
+    const updatedEducation = education.filter((_, i) => i !== index);
+    setEducation(updatedEducation);
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Education</h2>
@@ -80,10 +85,18 @@ const EducationForm = ({ education, setEducation }) => {
           Add Education
         </button>
       </div>
-      <ul className="list-disc pl-5 mb-4">
+      <ul className="list-none pl-0 mb-4">
         {education.map((edu, index) => (
-          <li key={index} className="mb-1">
-            {edu.institution} - {edu.degree} ({edu.startDate} to {edu.endDate}) - {edu.location}
+          <li key={index} className="mb-2 flex items-center justify-between bg-gray-100 p-2 rounded">
+            <span>
+              {edu.institution} - {edu.degree} ({edu.startDate} to {edu.endDate}) - {edu.location}
+            </span>
+            <button
+              onClick={() => deleteEducation(index)}
+              className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors"
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>

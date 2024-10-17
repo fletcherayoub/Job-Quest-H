@@ -294,7 +294,7 @@ const Jobs = () => {
             {/* Pagination */}
             {filteredJobs.length > jobsPerPage && (
               <div className="mt-8 flex justify-center">
-                <nav className="inline-flex rounded-md shadow-sm" aria-label="Pagination">
+                <navv className="inline-flex rounded-md shadow-sm" aria-label="Pagination">
                   <button
                     onClick={() => paginate(currentPage - 1)}
                     disabled={currentPage === 1}
@@ -324,7 +324,7 @@ const Jobs = () => {
                     <span className="sr-only">Next</span>
                     &gt;
                   </button>
-                </nav>
+                </navv>
               </div>
             )}
           </>

@@ -22,6 +22,11 @@ const ExperienceForm = ({ experience, setExperience }) => {
     });
   };
 
+  const deleteExperience = (index) => {
+    const updatedExperience = experience.filter((_, i) => i !== index);
+    setExperience(updatedExperience);
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Experience</h2>
@@ -96,10 +101,20 @@ const ExperienceForm = ({ experience, setExperience }) => {
       </div>
       <ul className="list-disc pl-5 mb-4">
         {experience.map((exp, index) => (
-          <li key={index} className="mb-1">
-            {exp.position} at {exp.company} ({exp.startDate} to {exp.endDate}) - {exp.location}
-            <br />
-            Responsibilities: {exp.responsibilities}
+          <li key={index} className="mb-2">
+            <div className="flex justify-between items-start">
+              <div>
+                <strong>{exp.position}</strong> at {exp.company} ({exp.startDate} to {exp.endDate}) - {exp.location}
+                <br />
+                Responsibilities: {exp.responsibilities}
+              </div>
+              <button
+                onClick={() => deleteExperience(index)}
+                className="bg-red-500 text-white p-1 rounded-md ml-2 text-sm"
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
