@@ -240,6 +240,7 @@ const Jobs = () => {
                 onChange={handleSalaryChange}
                 className="w-1/2 border border-gray-300 rounded-lg shadow-sm py-2 pl-3 pr-2 focus:outline-none"
                 aria-label="Minimum salary"
+                min="0" // This will prevent negative values from being manually typed
               />
               <input
                 type="number"
@@ -249,8 +250,10 @@ const Jobs = () => {
                 onChange={handleSalaryChange}
                 className="w-1/2 border border-gray-300 rounded-lg shadow-sm py-2 pl-3 pr-2 focus:outline-none"
                 aria-label="Maximum salary"
+                min="0" // This will prevent negative values from being manually typed
               />
             </div>
+
 
             <input
               type="text"
